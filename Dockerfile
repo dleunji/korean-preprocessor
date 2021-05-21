@@ -13,5 +13,5 @@ RUN pip3 install -r requirements.txt
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 8000
 EXPOSE 8501
-# CMD ["supervisord"]
-CMD ["/bin/bash"]
+CMD ["supervisord"]
+#CMD ["/bin/bash"]

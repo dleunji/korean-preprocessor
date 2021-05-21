@@ -1,8 +1,19 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.responses import Response
-class Text(BaseModel):
+from soynlp.normalizer import *
+import sys
+import soynlp
+
+class Input(BaseModel):
   text: str
+  n1: bool
+  n2: bool
+  n3: bool
+  n4: bool
+  n5: bool
+  num_repeats1: int
+  num_repeats2: int
 
 app = FastAPI(
   title = "Korean Preprocessor",
@@ -11,8 +22,18 @@ app = FastAPI(
 )
 
 @app.post("/preprocess")
-async def get_response(text: Text):
-  data = text.text
-  return Response(data, media_type="text/plain")
+def get_response(input: Input):
+  preprocessed = input.text
+  if input.n1:
+    preprocessed = emoticon_normalize(preprocessed, num_repeats = input.num_repeats1)
+  if input.n2:
+    preprocessed = repeat_normalize(preprocessed, num_repeats = input.num_repeats2)
+  if input.n3:
+    preprocessed = only_hangle(preprocessed)
+  if input.n4:
+    preprocessed = only_hangle_number(preprocessed)
+  if input.n5:
+    preprocessed = only_text(preprocessed)
+  return Response(preprocessed, media_type="text/plain")
 
 
