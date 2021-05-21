@@ -1,0 +1,6 @@
+soynlp
+fastapi
+uvicorn
+streamlit
+watchdog
+supervisor
