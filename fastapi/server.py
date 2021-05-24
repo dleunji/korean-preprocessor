@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Optional
 from starlette.responses import Response
 from soynlp.normalizer import *
 import sys
@@ -7,13 +8,13 @@ import soynlp
 
 class Input(BaseModel):
   text: str
-  n1: bool
-  n2: bool
-  n3: bool
-  n4: bool
-  n5: bool
-  num_repeats1: int
-  num_repeats2: int
+  n1: Optional[bool] = False
+  n2: Optional[bool] = False
+  n3: Optional[bool] = False
+  n4: Optional[bool] = False
+  n5: Optional[bool] = False
+  num_repeats1: Optional[int] = None
+  num_repeats2: Optional[int] = None
 
 app = FastAPI(
   title = "Korean Preprocessor",
