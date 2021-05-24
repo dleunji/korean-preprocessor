@@ -1,0 +1,95 @@
+openapi: 3.0.2
+info:
+  title: Korean Preprocessor
+  description: Please enter text to preprocess
+  version: 1.0.0
+paths:
+  /preprocess:
+    post:
+      summary: Get Response
+      operationId: get_response_preprocess_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Input'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    Input:
+      title: Input
+      required:
+        - text
+        - n1
+        - n2
+        - n3
+        - n4
+        - n5
+        - num_repeats1
+        - num_repeats2
+      type: object
+      properties:
+        text:
+          title: Text
+          type: string
+        n1:
+          title: N1
+          type: boolean
+        n2:
+          title: N2
+          type: boolean
+        n3:
+          title: N3
+          type: boolean
+        n4:
+          title: N4
+          type: boolean
+        n5:
+          title: N5
+          type: boolean
+        num_repeats1:
+          title: Num Repeats1
+          type: integer
+        num_repeats2:
+          title: Num Repeats2
+          type: integer
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            type: string
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string

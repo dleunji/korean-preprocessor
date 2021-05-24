@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from typing import Optional
 from starlette.responses import Response
@@ -8,13 +8,13 @@ import soynlp
 
 class Input(BaseModel):
   text: str
-  n1: Optional[bool] = False
-  n2: Optional[bool] = False
-  n3: Optional[bool] = False
-  n4: Optional[bool] = False
-  n5: Optional[bool] = False
-  num_repeats1: Optional[int] = None
-  num_repeats2: Optional[int] = None
+  emoticon_normalize: Optional[bool] = False
+  repeat_normalize: Optional[bool] = False
+  only_hangle: Optional[bool] = False
+  only_hangle_number: Optional[bool] = False
+  only_text: Optional[bool] = False
+  num_repeats1: Optional[int] = Query(2)
+  num_repeats2: Optional[int] = Query(2)
 
 app = FastAPI(
   title = "Korean Preprocessor",
@@ -25,16 +25,14 @@ app = FastAPI(
 @app.post("/preprocess")
 def get_response(input: Input):
   preprocessed = input.text
-  if input.n1:
+  if input.emoticon_normalize:
     preprocessed = emoticon_normalize(preprocessed, num_repeats = input.num_repeats1)
-  if input.n2:
+  if input.repeat_normalize:
     preprocessed = repeat_normalize(preprocessed, num_repeats = input.num_repeats2)
-  if input.n3:
+  if input.only_hangle:
     preprocessed = only_hangle(preprocessed)
-  if input.n4:
+  if input.only_hangle_number:
     preprocessed = only_hangle_number(preprocessed)
-  if input.n5:
+  if input.only_text:
     preprocessed = only_text(preprocessed)
   return Response(preprocessed, media_type="text/plain")
-
-
