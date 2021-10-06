@@ -47,13 +47,43 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ### Execution
 빌드한 다음 `docker run -p 8501:8501 image_name`을 실행함으로써 한 컨테이너에 streamlit과 FastAPI를 동시에 실행할 수 있다.
-추가적으로 컨테이너의 8000번 포트 또한 호스트 포트에 매핑하도록  `docker run -p 8501:8501 -p 8000:8000 image_name`을 실행함으로써 `0.0.0.0/8000`에 접속한 후 FastAPI의 Swagger를 활용할 수 있다. 편의상 호스트 포트와 컨테이너의 포트를 동일하게 처리하였다.
+추가적으로 컨테이너의 8000번 포트 또한 호스트 포트에 매핑하도록 하여 호스트에서 FastAPI에도 접근가능하도록 한다. `docker run -p 8501:8501 -p 8000:8000 image_name`을 실행함으로써 `0.0.0.0/8000`에 접속한 후 FastAPI의 Swagger를 활용할 수 있다. 편의상 호스트 포트와 컨테이너의 포트를 동일하게 처리하였다.
 
 ![스크린샷 2021-10-06 오후 5 50 32](https://user-images.githubusercontent.com/46207836/136170980-c3fe5a1e-d7f2-467d-b67f-8398c915e785.png)
 
 ## 2. Microservice Architecure
 `supervisord.conf`를 사용하였던 1번과 달리 `docker-compose.yml`을 사용하여 컨테이너 2개를 동시에 띄우고 컨테이너 간 통신을 통해 애플리케이션을 구동할 수 있다.
-
+```yaml
+version: '3'
+services:
+  fastapi:
+    build: fastapi/
+    ports:
+      - "8000:8000"
+    networks:
+      - deploy_network  
+  streamlit:
+    build: streamlit/
+    depends_on:
+      - fastapi
+    ports:
+      - "8501:8501"
+    expose:
+      - "8000"
+      - "8501"
+    networks:
+      - deploy_network
+networks:
+  deploy_network:
+    driver: bridge
+```
+컨테이너별 관리가 용이하도록 일부 파일의 위치도 재조정하였으니 구체적인 내용은 branch 'msa'에 확인 가능하다.
+아래 명령어로 실행 또한 가능하다.
+```
+docker-compose up --build -d
+```
 
 ## Reference
 - https://advancedweb.hu/supervisor-with-docker-lessons-learned/
+- https://docs.microsoft.com/ko-kr/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose
+- https://docs.docker.com/compose/gettingstarted/
